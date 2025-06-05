@@ -25,9 +25,11 @@ const Verify = () => {
         )
 
         if (response.data.success) {
+          toast.success('Stripe payment successful!')
           setCartItems({})
           navigate('/orders')
         } else {
+          toast.error('Stripe payment failed.')
           navigate('/cart')
         }
       }
