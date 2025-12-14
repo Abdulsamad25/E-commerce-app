@@ -1,3 +1,5 @@
+/* eslint-disable no-empty */
+/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -28,18 +30,17 @@ const VisitorTracker = ({ backendUrl }) => {
           sessionId
         });
 
-        console.log('✅ Visit tracked:', page);
+       
       } catch (error) {
-        // Silent fail - don't disrupt user experience
-        console.log('Analytics tracking failed:', error.message);
+      
       }
     };
 
     // Track on route change
     trackVisit();
-  }, [location, backendUrl]); // Re-run when location changes
+  }, [location, backendUrl]); 
 
-  return null; // This component doesn't render anything
+  return null; 
 };
 
 export default VisitorTracker;
