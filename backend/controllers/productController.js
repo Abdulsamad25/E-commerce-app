@@ -125,6 +125,87 @@ const removeProduct = async (req, res) => {
   }
 };
 
+// function for update product
+const updateProduct = async (req, res) => {
+  try {
+    const {
+      id,
+      name,
+      description,
+      price,
+      category,
+      subCategory,
+      brand,
+      sizes,
+      colors,
+      bestSeller,
+    } = req.body;
+
+    const product = await productModel.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    // Handle images (optional)
+    const image1 = req.files?.image1 && req.files.image1[0];
+    const image2 = req.files?.image2 && req.files.image2[0];
+    const image3 = req.files?.image3 && req.files.image3[0];
+    const image4 = req.files?.image4 && req.files.image4[0];
+
+    const images = [image1, image2, image3, image4].filter(Boolean);
+
+    let imagesUrl = product.image; // keep old images by default
+
+    if (images.length > 0) {
+      imagesUrl = await Promise.all(
+        images.map(async (item) => {
+          const result = await cloudinary.uploader.upload(item.path, {
+            resource_type: "image",
+          });
+          return result.secure_url;
+        })
+      );
+    }
+
+    // Parse arrays safely
+    const parsedSizes = sizes ? JSON.parse(sizes) : product.sizes;
+    const parsedColors = colors ? JSON.parse(colors) : product.colors;
+
+    await productModel.findByIdAndUpdate(
+      id,
+      {
+        name: name ?? product.name,
+        description: description ?? product.description,
+        price: price ? Number(price) : product.price,
+        category: category ?? product.category,
+        subCategory: subCategory ?? product.subCategory,
+        brand: brand ?? product.brand,
+        sizes: parsedSizes,
+        colors: parsedColors,
+        bestSeller:
+          bestSeller !== undefined
+            ? bestSeller === "true"
+            : product.bestSeller,
+        image: imagesUrl,
+      },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Product updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
 //function for single product
 const singleProduct = async (req, res) => {
   try {
@@ -138,4 +219,4 @@ const singleProduct = async (req, res) => {
   }
 };
 
-export { listProducts, addProduct, removeProduct, singleProduct };
+export { listProducts, addProduct, removeProduct, singleProduct, updateProduct };

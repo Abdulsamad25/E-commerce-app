@@ -2,10 +2,14 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { backendUrl, currency } from "../App";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 const List = ({token}) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
 
   const fetchList = async () => {
     try {
@@ -145,6 +149,14 @@ const List = ({token}) => {
                       </p>
                     </div>
                   </div>
+
+                  {/* Edit Button */}
+                <button
+                  onClick={() => navigate(`/admin/edit/${item._id}`)}
+                  className="bg-black hover:bg-gray-800 shadow-md mb-3 px-4 py-3 rounded-lg w-full font-semibold text-white transition-all"
+                >
+                  Edit Product
+                </button>
 
                   {/* Delete Button */}
                   <button 
