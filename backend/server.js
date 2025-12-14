@@ -25,6 +25,7 @@ const allowedOrigins = [
   'http://localhost:5174',
   'https://www.shopabasi.com',
   'https://shopabasi.com',
+  'https://abasi-admin.vercel.app',  // Hardcode your admin URL too
   process.env.FRONTEND_URL,
   process.env.ADMIN_URL
 ].filter(Boolean)
@@ -35,10 +36,13 @@ app.use(cors({
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
+      console.log('Blocked origin:', origin)  // This helps debug
       callback(new Error('Not allowed by CORS'))
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'token']
 }))
 
 // Trust proxy to get correct IP addresses
