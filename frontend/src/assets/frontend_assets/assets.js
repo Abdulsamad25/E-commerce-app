@@ -74,6 +74,12 @@ import razorpay_logo from './razorpay_logo.png'
 import stripe_logo from './stripe_logo.png'
 import paystack_logo from './paystack_logo.png'
 import cross_icon from './cross_icon.png'
+import abasi from './abasi-logo.png'
+import abasi_hero_bg from './abasi_hero-bg.jpg'
+import brand_shoot_first from './BRAND-SHOOT-244.jpg'
+import brand_shoot_second from './BRAND-SHOOT-264.jpg'
+import brand_shoot_third from './BRAND-SHOOT-275.jpg'
+// import abasi_logo from './abasi.png'
 
 export const assets = {
     logo,
@@ -94,7 +100,12 @@ export const assets = {
     razorpay_logo,
     stripe_logo,
     paystack_logo,
-    cross_icon
+    cross_icon,
+    abasi,
+    abasi_hero_bg,
+    brand_shoot_first,
+    brand_shoot_second,
+    brand_shoot_third,
 }
 
 export const products = [

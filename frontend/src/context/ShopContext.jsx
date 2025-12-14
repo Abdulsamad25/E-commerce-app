@@ -6,8 +6,8 @@ import axios from "axios"
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
-  const currency = "$";
-  const delivery_fee = 10;
+  const currency = "₦";
+  const delivery_fee = 1000;
   const backendUrl = import.meta.env.VITE_BACKEND_URL
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -39,7 +39,7 @@ const ShopContextProvider = (props) => {
       try {
         await axios.post(backendUrl + '/api/cart/add',{itemId,size}, {headers:{token}} )
       } catch (error) {
-        console.log(error)
+       
         toast.error(error.message)
       }
     }
@@ -75,7 +75,7 @@ const ShopContextProvider = (props) => {
       try {
         await axios.post(backendUrl + '/api/cart/update',{itemId, size, quantity}, {headers:{token}} )
       } catch (error) {
-        console.log(error)
+       
         toast.error(error.message)
       }
 
@@ -112,7 +112,7 @@ const ShopContextProvider = (props) => {
      }
       
     } catch (error) {
-      console.log(error)
+    
       toast.error(error.message)
     }
   }
@@ -124,10 +124,65 @@ const ShopContextProvider = (props) => {
         setCartItems(response.data.cartData)
       }
     } catch (error) {
-      console.log(error)
+    
       toast.error(error.message)
     }
   }
+
+  // Auto-logout after 1 hour of inactivity
+  useEffect(() => {
+    const checkTokenExpiry = () => {
+      const loginTime = localStorage.getItem('loginTime');
+      const storedToken = localStorage.getItem('token');
+      
+      if (storedToken && loginTime) {
+        const currentTime = Date.now();
+        const timeElapsed = currentTime - parseInt(loginTime);
+        const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+        
+        if (timeElapsed > oneHour) {
+          // Token expired - logout user
+          localStorage.removeItem('token');
+          localStorage.removeItem('loginTime');
+          setToken('');
+          setCartItems({});
+          toast.info('Session expired. Please login again.');
+          navigate('/login');
+        }
+      }
+    };
+
+    // Check immediately on mount
+    checkTokenExpiry();
+
+    // Check every 5 minutes
+    const interval = setInterval(checkTokenExpiry, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
+
+  // Reset timer on user activity
+  useEffect(() => {
+    const resetLoginTime = () => {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        localStorage.setItem('loginTime', Date.now().toString());
+      }
+    };
+
+    // Reset timer on user activity
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    
+    events.forEach(event => {
+      window.addEventListener(event, resetLoginTime);
+    });
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, resetLoginTime);
+      });
+    };
+  }, []);
 
   useEffect(()=>{
     getProductsData()

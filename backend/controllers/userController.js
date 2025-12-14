@@ -1,99 +1,153 @@
 import userModel from "../models/userModel.js";
-import validator from "validator"
-import bcrypt from "bcrypt"
-import jwt from 'jsonwebtoken'
-
-
+import adminModel from "../models/adminModel.js";
+import validator from "validator";
+import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
 
 const createToken = (id) => {
-  return jwt.sign({id},process.env.JWT_SECRET)
+  return jwt.sign({id}, process.env.JWT_SECRET);
 }
 
 //Routes for User Login
-const loginUser = async (req,res) => {
-  try{
-    const {email,password} = req.body;
+const loginUser = async (req, res) => {
+  try {
+    const {email, password} = req.body;
 
     const user = await userModel.findOne({email});
     
-    if(!user){
-       return res.json({success:false, message:"User does not exist"})
+    if (!user) {
+      return res.json({success: false, message: "User does not exist"});
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-  if(isMatch){
-    const token = createToken(user._id)
-     return res.json({success:true, token})
-  }
-  else{
-     return res.json({success:false, message:"Invalid creditials"})
-  }
+    if (isMatch) {
+      const token = createToken(user._id);
+      return res.json({success: true, token});
+    } else {
+      return res.json({success: false, message: "Invalid credentials"});
+    }
 
-  }catch(error){
-    console.log(error)
-     return res.json({success:false, message:error.message})
+  } catch (error) {
+    console.log(error);
+    return res.json({success: false, message: error.message});
   }
-
 }
 
-//Routes for user regsistration
-const registerUser = async (req,res) => {
-  try{
-    const {name,email,password} = req.body;
+//Routes for user registration
+const registerUser = async (req, res) => {
+  try {
+    const {name, email, password} = req.body;
     
     //checking user already exists or not 
     const exists = await userModel.findOne({email});
-    if(exists){
-      return res.json({success:false, message:"User already exists"})
+    if (exists) {
+      return res.json({success: false, message: "User already exists"});
     }
 
     //validating email format & strong password
-    if(!validator.isEmail(email)){
-       return res.json({success:false, message:"Please enter a valid Email"})
+    if (!validator.isEmail(email)) {
+      return res.json({success: false, message: "Please enter a valid Email"});
     }
-     if(password.length < 8){
-       return res.json({success:false, message:"Please enter a strong Password"})
+    if (password.length < 8) {
+      return res.json({success: false, message: "Please enter a strong Password"});
     }
 
     //hashing user password
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password,salt)
-
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new userModel({
       name,
       email,
       password: hashedPassword
-    })
+    });
 
-    const user = await newUser.save()
+    const user = await newUser.save();
 
-    const token = createToken(user._id)
+    const token = createToken(user._id);
 
-    res.json({success:true, token})
+    res.json({success: true, token});
 
-  }catch(error){
-    console.log(error)
-    res.json({success:false, message:error.message})
+  } catch (error) {
+    console.log(error);
+    res.json({success: false, message: error.message});
   }
 }
 
 //Routes for admin Login
-const adminUser = async (req,res) => {
+const adminLogin = async (req, res) => {
   try {
-    const{email,password} = req.body
+    const {email, password} = req.body;
 
-    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      const token = jwt.sign(email+password,process.env.JWT_SECRET);
-      res.json({success:true,token})
-    } else{
-      res.json({success:false, message:"Invalid credentials"})
+    // Find admin by email
+    const admin = await adminModel.findOne({email});
+    
+    if (!admin) {
+      return res.json({success: false, message: "Admin does not exist"});
     }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, admin.password);
+
+    if (isMatch) {
+      const token = jwt.sign({id: admin._id, role: 'admin'}, process.env.JWT_SECRET);
+      return res.json({success: true, token});
+    } else {
+      return res.json({success: false, message: "Invalid credentials"});
+    }
+
   } catch (error) {
-    console.log(error)
-    res.json({success:false, message:error.message})
+    console.log(error);
+    return res.json({success: false, message: error.message});
   }
 }
 
-export {loginUser, registerUser, adminUser}
+//Routes for admin Registration (Optional - for creating first admin or additional admins)
+const registerAdmin = async (req, res) => {
+  try {
+    const {name, email, password, secretKey} = req.body;
+    
+    // Use a secret key to prevent unauthorized admin registration
+    if (secretKey !== process.env.ADMIN_SECRET_KEY) {
+      return res.json({success: false, message: "Unauthorized admin registration"});
+    }
+
+    // Check if admin already exists
+    const exists = await adminModel.findOne({email});
+    if (exists) {
+      return res.json({success: false, message: "Admin already exists"});
+    }
+
+    // Validating email format & strong password
+    if (!validator.isEmail(email)) {
+      return res.json({success: false, message: "Please enter a valid Email"});
+    }
+    if (password.length < 8) {
+      return res.json({success: false, message: "Please enter a strong Password (min 8 characters)"});
+    }
+
+    // Hashing admin password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newAdmin = new adminModel({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'admin'
+    });
+
+    const admin = await newAdmin.save();
+
+    const token = jwt.sign({id: admin._id, role: 'admin'}, process.env.JWT_SECRET);
+
+    res.json({success: true, token, message: "Admin registered successfully"});
+
+  } catch (error) {
+    console.log(error);
+    res.json({success: false, message: error.message});
+  }
+}
+
+export {loginUser, registerUser, adminLogin, registerAdmin};

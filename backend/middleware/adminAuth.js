@@ -1,19 +1,26 @@
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
-const adminAuth = async (req,res,next) =>{
+const adminAuth = async (req, res, next) => {
   try {
-    const {token} = req.headers
+    const {token} = req.headers;
+    
     if (!token) {
-     return res.json({success:false, message:"Not Authorized, Login again"})
+      return res.json({success: false, message: "Not Authorized, Login again"});
     }
-    const token_decode = jwt.verify(token,process.env.JWT_SECRET);
-    if (token_decode !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
-     return res.json({success:false, message:"Not Authorized, Login again"})
+
+    const token_decode = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Check if the token contains admin role
+    if (!token_decode.id || token_decode.role !== 'admin') {
+      return res.json({success: false, message: "Not Authorized, Admin access required"});
     }
-    next()
+
+    req.adminId = token_decode.id; // Attach admin ID to request
+    next();
+
   } catch (error) {
-    console.log(error)
-    return res.json({success:false, message:error.message})
+    console.log(error);
+    return res.json({success: false, message: error.message});
   }
 }
 

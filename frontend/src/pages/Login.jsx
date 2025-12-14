@@ -24,6 +24,8 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
+          // Store login timestamp
+          localStorage.setItem("loginTime", Date.now().toString());
         } else {
           toast.error(response.data.message);
         }
@@ -36,6 +38,8 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
+          // Store login timestamp
+          localStorage.setItem("loginTime", Date.now().toString());
         } else {
           toast.error(response.data.message);
         }
@@ -46,16 +50,16 @@ const Login = () => {
     }
   };
 
-  useEffect(() =>{
-    if(token){
+  useEffect(() => {
+    if (token) {
       navigate("/");
     }
-  },[token])
+  }, [token]);
 
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="flex flex-col items-center gap-4 m-auto mt-14 w-[90%] sm:max-w-96 text-gray-800"
+      className="flex flex-col items-center gap-4 m-auto mt-0 mb-5 w-[90%] sm:max-w-96 text-gray-800"
     >
       <div className="inline-flex items-center gap-2 mt-10 mb-2">
         <p className="text-3xl prata-regular">{currentState}</p>

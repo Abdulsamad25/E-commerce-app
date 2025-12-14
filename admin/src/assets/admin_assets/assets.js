@@ -3,12 +3,14 @@ import add_icon from '../admin_assets/add_icon.png'
 import order_icon from '../admin_assets/order_icon.png'
 import upload_area from '../admin_assets/upload_area.png'
 import parcel_icon from '../admin_assets/parcel_icon.svg'
+import abasi from '../admin_assets/abasi-logo.png'
 
 export const assets = {
     logo,
     add_icon,
     order_icon,
     upload_area,
-    parcel_icon
+    parcel_icon,
+    abasi
 }
 

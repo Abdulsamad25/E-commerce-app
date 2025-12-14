@@ -17,7 +17,9 @@ const addProduct = async (req, res) => {
       price,
       category,
       subCategory,
+      brand,
       sizes,
+      colors,
       bestSeller,
     } = req.body;
 
@@ -65,14 +67,26 @@ const addProduct = async (req, res) => {
       });
     }
 
+    let parsedColors;
+    try {
+      parsedColors = JSON.parse(colors);
+    } catch (e) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid colors format. Must be a JSON array.",
+      });
+    }
+
     const productData = {
       name,
       description,
       category,
       price: Number(price),
       subCategory,
+      brand,
       bestSeller: bestSeller === "true",
       sizes: parsedSizes,
+      colors: parsedColors,
       image: imagesUrl,
       date: Date.now(),
     };

@@ -17,27 +17,35 @@ import SearchBar from './components/SearchBar'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Verify from './pages/Verify'
+import VisitorTracker from './components/VisitorTracker'
 
+// Backend URL - make sure this matches your backend
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 
 const App = () => {
   return (
-    <div className='px-4 sm:px-[5w] md:px-[7vw] lg:px-[9vw]'>
+    <div>
       <ToastContainer/>
+      {/* Visitor Analytics Tracker - Tracks all page visits */}
+      <VisitorTracker backendUrl={backendUrl} />
+      
       <Navbar/>
-      <SearchBar/>
-      <Routes>
-        <Route path='/' element={<Home/>} />
-        <Route path='/collection' element={<Collection/>}/>
-        <Route path='/about' element={<About/>}/>
-        <Route path='/contact' element={<Contact/>}/>
-        <Route path='/product/:productId' element={<Prodct/>}/>
-        <Route path='/cart' element={<Cart/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/place-order' element={<PlaceOrder/>}/>
-        <Route path='/orders' element={<Order/>}/>
-        <Route path='/verify' element={<Verify/>}/>
-      </Routes>
-      <Footer/>
+      <div>
+        <SearchBar/>
+        <Routes>
+          <Route path='/' element={<Home/>} />
+          <Route path='/collection' element={<Collection/>}/>
+          <Route path='/about' element={<About/>}/>
+          <Route path='/contact' element={<Contact/>}/>
+          <Route path='/product/:productId' element={<Prodct/>}/>
+          <Route path='/cart' element={<Cart/>}/>
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/place-order' element={<PlaceOrder/>}/>
+          <Route path='/orders' element={<Order/>}/>
+          <Route path='/verify' element={<Verify/>}/>
+        </Routes>
+        <Footer/>
+      </div>
     </div>
   )
 }
