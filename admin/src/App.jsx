@@ -13,6 +13,7 @@ import Edit from "./pages/Edit";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const currency = "₦";
 
@@ -106,6 +107,7 @@ const App = () => {
                 <Route path="/orders" element={<Orders token={token} />} />
                 <Route path="/settings" element={<Settings token={token} setToken={setToken} />} />
                 <Route path="/admin/edit/:id" element={<Edit token={token} />} />
+               
 
               </Routes>
             </div>

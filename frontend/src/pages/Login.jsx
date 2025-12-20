@@ -96,7 +96,15 @@ const Login = () => {
       />
 
       <div className="flex justify-between mt-[8px] w-full text-sm">
-        <p className="cursor-pointer">Forgot your Password</p>
+        {currentState === "Login" && (
+          <p 
+            onClick={() => navigate('/forgot-password')}
+            className="text-blue-600 hover:underline cursor-pointer"
+          >
+            Forgot your Password?
+          </p>
+        )}
+        {currentState === "Sign Up" && <p></p>}
         <p
           className="cursor-pointer"
           onClick={() =>

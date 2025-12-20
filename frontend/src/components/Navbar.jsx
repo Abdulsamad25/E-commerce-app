@@ -66,7 +66,7 @@ const Navbar = () => {
 
       {/* Dropdown */}
       {token && (
-        <div className={`${isProfileMenuOpen ? 'block' : 'hidden group-hover:block'} right-0 absolute pt-4 dropdown-menu`}>
+        <div className={`${isProfileMenuOpen ? 'block' : 'hidden group-hover:block'} right-0 absolute z-50 pt-4 dropdown-menu`}>
           <div className="flex flex-col gap-2 bg-white px-5 py-3 border border-blue-400 rounded w-36 text-gray-700">
             <p
               onClick={() => { navigate('/orders'); setIsProfileMenuOpen(false); }}

@@ -12,6 +12,8 @@ import Login from './pages/Login'
 import PlaceOrder from './pages/PlaceOrder'
 import Order from './pages/Order'
 import Verify from './pages/Verify'
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -52,12 +54,14 @@ const App = () => {
           <Route path='/product/:productId' element={<Prodct />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<Login />} />
+           <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/place-order' element={<PlaceOrder />} />
           <Route path='/orders' element={<Order />} />
           <Route path='/verify' element={<Verify />} />
         </Routes>
 
-        <Footer />
+        <Footer/>
       </div>
     </div>
   )
