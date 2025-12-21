@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -10,6 +11,7 @@ const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [expandedOrders, setExpandedOrders] = useState({});
 
   const fetchAllOrders = async () => {
     if (!token) {
@@ -50,6 +52,13 @@ const Orders = ({ token }) => {
       console.log(error);
       toast.error(error.response.data.message);
     }
+  };
+
+  const toggleOrderItems = (orderId) => {
+    setExpandedOrders(prev => ({
+      ...prev,
+      [orderId]: !prev[orderId]
+    }));
   };
 
   useEffect(() => {
@@ -241,10 +250,58 @@ const Orders = ({ token }) => {
                         <h3 className="font-bold text-black">Order Information</h3>
                       </div>
                       <div className="space-y-2 text-sm">
-                        <p className="flex justify-between">
-                          <span className="text-gray-600">Items:</span>
-                          <span className="font-semibold text-black">{order.items.length}</span>
-                        </p>
+                        <div>
+                          <button
+                            onClick={() => toggleOrderItems(order._id)}
+                            className="flex justify-between items-center hover:bg-blue-50 p-2 rounded-lg w-full transition-colors"
+                          >
+                            <span className="text-gray-600">Items:</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-black">{order.items.length}</span>
+                              <svg
+                                className={`w-4 h-4 text-blue-400 transition-transform ${
+                                  expandedOrders[order._id] ? 'rotate-180' : ''
+                                }`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 9l-7 7-7-7"
+                                />
+                              </svg>
+                            </div>
+                          </button>
+
+                          {/* Expanded Items List */}
+                          {expandedOrders[order._id] && (
+                            <div className="space-y-2 bg-gray-50 mt-2 p-3 border border-gray-200 rounded-lg">
+                              {order.items.map((item, itemIndex) => (
+                                <div
+                                  key={itemIndex}
+                                  className="flex justify-between items-start gap-3 bg-white p-2 rounded-lg text-xs"
+                                >
+                                  <div className="flex-1">
+                                    <p className="font-semibold text-black">{item.name}</p>
+                                    <p className="text-gray-600">
+                                      Size: {item.size} | Qty: {item.quantity}
+                                    </p>
+                                    {item.color && (
+                                      <p className="text-gray-600">Color: {item.color}</p>
+                                    )}
+                                  </div>
+                                  <p className="font-semibold text-black whitespace-nowrap">
+                                    {currency}{(item.price * item.quantity).toLocaleString()}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
                         <p className="flex justify-between">
                           <span className="text-gray-600">Payment Method:</span>
                           <span className="font-semibold text-black">{order.paymentMethod}</span>
@@ -268,7 +325,6 @@ const Orders = ({ token }) => {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 mb-3">
                        <span className='font-semibold text-lg'>₦</span>
-                       
                         <h3 className="font-bold text-black">Total Amount</h3>
                       </div>
                       <p className="font-bold text-black text-3xl">
