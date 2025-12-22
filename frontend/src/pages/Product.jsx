@@ -366,12 +366,9 @@ const Product = () => {
                     Shipping Information
                   </h3>
                   <ul className="space-y-2 ml-7">
-                    <li>• Free standard shipping on orders over $100</li>
+                   
                     <li>• Express shipping available at checkout</li>
-                    <li>• Estimated delivery: 3-5 business days</li>
-                    <li>
-                      • International shipping available to select countries
-                    </li>
+                    <li>• Estimated delivery: 4-7 business days</li>
                   </ul>
                 </div>
                 <div>
