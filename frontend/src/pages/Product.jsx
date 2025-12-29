@@ -366,7 +366,6 @@ const Product = () => {
                     Shipping Information
                   </h3>
                   <ul className="space-y-2 ml-7">
-                   
                     <li>• Express shipping available at checkout</li>
                     <li>• Estimated delivery: 4-7 business days</li>
                   </ul>
